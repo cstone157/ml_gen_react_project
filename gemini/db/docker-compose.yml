@@ -6,6 +6,9 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=myadminuser
+      - MONGO_INITDB_ROOT_PASSWORD=myadminpassword # **STRONG PASSWORD REQUIRED**
     restart: always
 
   mongo-express:
@@ -15,6 +18,8 @@ services:
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongodb
       - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=myadminuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=myadminpassword # **STRONG PASSWORD REQUIRED**
     depends_on:
       - mongodb
     restart: always
