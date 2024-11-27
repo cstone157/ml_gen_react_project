@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors'); // Import the cors package
 
 const app = express();
 const port = 3000;
@@ -41,6 +42,9 @@ const orderSchema = new mongoose.Schema({
 const Supply = mongoose.model('Supply', supplySchema);
 const Product = mongoose.model('Product', productSchema);
 const Order = mongoose.model('Order', orderSchema);
+
+// Enable CORS for all origins (Insecure for Production!)
+app.use(cors());
 
 app.use(bodyParser.json());
 
