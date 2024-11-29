@@ -1,0 +1,23 @@
+-- Input #1
+Create a website using react 17.0.2. 
+The application should have a warehouse management function, a user should be able to add supplies to the warehouse and update the amount of each of the different supply.  
+The application should also have a list of differnt products that the company manufactures and the amount of each of the supplies required to build that product.
+There should be an order page where the user can enter how many of the product is being order.  The orders should be highlighted if there aren't sufficient supplies in the warehouse and a button to update that someone has started building it, and automatically subtract the correct number of supplies from the warehouse.
+
+-- Input #2
+For the previous example write the command to start the server and api
+
+== > api was semi functional, but the react was buggy for NIPRGPT
+
+===================================================== V2 =====================================================
+== Break up the application into several different steps
+==============================================================================================================
+-- Input # 1
+Create a api using nodejs and express.  The api has supplies, products, and orders.  
+Each supply has an associated cost per supply and a current number in stock.
+Each product has a sell cost, time to build, and requires at least one supply to be built.  
+And each order has a deadline and at least one product or supply.
+Include the package.json.
+
+-- Input # 2 : didn't include a mongodb, request one.
+Write a docker-compose.yaml to create a MongoDB for the previous api.
