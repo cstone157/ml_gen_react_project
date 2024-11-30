@@ -1,0 +1,1 @@
+## I noticed that I think NIPR GPT was struggling with the context, so to try and make this work better, I decided to break it up into three seperate contexts.
