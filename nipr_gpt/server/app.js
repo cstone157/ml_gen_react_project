@@ -18,6 +18,8 @@ const userRoutes = require('./routes/userRoutes');
 app.use('/api/users', userRoutes);
 const supplyRoutes = require('./routes/supplyRoutes');
 app.use('/api/supplies', supplyRoutes);
+const productRoutes = require('./routes/productRoutes');
+app.use('/api/products', productRoutes);
 
 // Start server
 const port = 3000;
