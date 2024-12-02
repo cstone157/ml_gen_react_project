@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Modal from './ProductsModal';
+import ProductsModal from './ProductsModal';
 
 function ProductsTable() {
   const [products, setProducts] = useState([]);
@@ -7,6 +7,8 @@ function ProductsTable() {
   const [error, setError] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [pageNumber, setPageNumber] = useState(0);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -48,6 +50,15 @@ function ProductsTable() {
     handleModalClose();
   };
 
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value));
+    setPageNumber(0);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPageNumber(newPage);
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -66,7 +77,7 @@ function ProductsTable() {
         padding: '20px',
       }}
     >
-      <table
+      <div
         style={{
           width: '90%',
           borderRadius: '10px',
@@ -74,31 +85,63 @@ function ProductsTable() {
           overflow: 'hidden',
         }}
       >
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>In Stock</th>
-            <th>Sale Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product, index) => (
-            <tr
-              key={index}
-              onClick={() => handleRowClick(product)}
-              style={{
-                cursor: 'pointer',
-              }}
-            >
-              <td>{product.name}</td>
-              <td>{product.inStock}</td>
-              <td>${product.salePrice.toFixed(2)}</td>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>In Stock</th>
+              <th>Sale Price</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products
+              .slice(pageNumber * rowsPerPage, (pageNumber + 1) * rowsPerPage)
+              .map((product, index) => (
+                <tr
+                  key={index}
+                  onClick={() => handleRowClick(product)}
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                >
+                  <td>{product.name}</td>
+                  <td>{product.inStock}</td>
+                  <td>${product.salePrice.toFixed(2)}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '10px',
+          }}
+        >
+          <div>
+            <label>
+              Rows per page:
+              <select value={rowsPerPage} onChange={handleChangeRowsPerPage}>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
+              Page: {pageNumber + 1} of {Math.ceil(products.length / rowsPerPage)}
+            </label>
+            <button onClick={() => handleChangePage(null, 0)}>First</button>
+            <button onClick={() => handleChangePage(null, pageNumber - 1)}>Prev</button>
+            <button onClick={() => handleChangePage(null, pageNumber + 1)}>Next</button>
+            <button onClick={() => handleChangePage(null, Math.ceil(products.length / rowsPerPage) - 1)}>Last</button>
+          </div>
+        </div>
+      </div>
       {isModalOpen && (
-        <Modal
+        <ProductsModal
           onClose={handleModalClose}
           product={selectedProduct}
           onUpdate={handleProductUpdate}

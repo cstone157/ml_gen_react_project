@@ -7,6 +7,8 @@ function SuppliesTable() {
   const [error, setError] = useState(null);
   const [selectedSupply, setSelectedSupply] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [pageNumber, setPageNumber] = useState(0);
 
   useEffect(() => {
     const fetchSupplies = async () => {
@@ -48,6 +50,15 @@ function SuppliesTable() {
     handleModalClose();
   };
 
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value));
+    setPageNumber(0);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPageNumber(newPage);
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -66,7 +77,7 @@ function SuppliesTable() {
         padding: '20px',
       }}
     >
-      <table
+      <div
         style={{
           width: '90%',
           borderRadius: '10px',
@@ -74,29 +85,61 @@ function SuppliesTable() {
           overflow: 'hidden',
         }}
       >
-        <thead>
-          <tr>
-            <th style={{alignItems: 'left'}}>Name</th>
-            <th style={{alignItems: 'left'}}>In Stock</th>
-            <th style={{alignItems: 'left'}}>Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          {supplies.map((supply, index) => (
-            <tr
-              key={index}
-              onClick={() => handleRowClick(supply)}
-              style={{
-                cursor: 'pointer',
-              }}
-            >
-              <td>{supply.name}</td>
-              <td>{supply.inStock}</td>
-              <td>${supply.cost.toFixed(2)}</td>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>In Stock</th>
+              <th>Cost</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {supplies
+              .slice(pageNumber * rowsPerPage, (pageNumber + 1) * rowsPerPage)
+              .map((supply, index) => (
+                <tr
+                  key={index}
+                  onClick={() => handleRowClick(supply)}
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                >
+                  <td>{supply.name}</td>
+                  <td>{supply.inStock}</td>
+                  <td>${supply.cost.toFixed(2)}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '10px',
+          }}
+        >
+          <div>
+            <label>
+              Rows per page:
+              <select value={rowsPerPage} onChange={handleChangeRowsPerPage}>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
+              Page: {pageNumber + 1} of {Math.ceil(supplies.length / rowsPerPage)}
+            </label>
+            <button onClick={() => handleChangePage(null, 0)}>First</button>
+            <button onClick={() => handleChangePage(null, pageNumber - 1)}>Prev</button>
+            <button onClick={() => handleChangePage(null, pageNumber + 1)}>Next</button>
+            <button onClick={() => handleChangePage(null, Math.ceil(supplies.length / rowsPerPage) - 1)}>Last</button>
+          </div>
+        </div>
+      </div>
       {isModalOpen && (
         <SupplyModal
           onClose={handleModalClose}
