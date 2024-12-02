@@ -1,30 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import SupplyModal from './SupplyModal';
+import Modal from './ProductsModal';
 
-function SuppliesTable() {
-  const [supplies, setSupplies] = useState([]);
+function ProductsTable() {
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedSupply, setSelectedSupply] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchSupplies = async () => {
+    const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/supplies');
+        const response = await fetch('http://localhost:3000/api/products');
         const data = await response.json();
-        setSupplies(data);
+        setProducts(data);
         setLoading(false);
       } catch (error) {
         setError(error.message);
         setLoading(false);
       }
     };
-    fetchSupplies();
+    fetchProducts();
   }, []);
 
-  const handleRowClick = (supply) => {
-    setSelectedSupply(supply);
+  const handleRowClick = (product) => {
+    setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
@@ -32,16 +32,16 @@ function SuppliesTable() {
     setIsModalOpen(false);
   };
 
-  const handleSupplyUpdate = async (updatedSupply) => {
+  const handleProductUpdate = async (updatedProduct) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/supplies/${updatedSupply.id}`, {
+      const response = await fetch(`http://localhost:3000/api/products/${updatedProduct.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedSupply),
+        body: JSON.stringify(updatedProduct),
       });
       const data = await response.json();
-      const updatedSupplies = supplies.map((supply) => (supply.id === data.id ? data : supply));
-      setSupplies(updatedSupplies);
+      const updatedProducts = products.map((product) => (product.id === data.id ? data : product));
+      setProducts(updatedProducts);
     } catch (error) {
       console.error(error);
     }
@@ -76,36 +76,36 @@ function SuppliesTable() {
       >
         <thead>
           <tr>
-            <th style={{alignItems: 'left'}}>Name</th>
-            <th style={{alignItems: 'left'}}>In Stock</th>
-            <th style={{alignItems: 'left'}}>Cost</th>
+            <th>Name</th>
+            <th>In Stock</th>
+            <th>Sale Price</th>
           </tr>
         </thead>
         <tbody>
-          {supplies.map((supply, index) => (
+          {products.map((product, index) => (
             <tr
               key={index}
-              onClick={() => handleRowClick(supply)}
+              onClick={() => handleRowClick(product)}
               style={{
                 cursor: 'pointer',
               }}
             >
-              <td>{supply.name}</td>
-              <td>{supply.inStock}</td>
-              <td>${supply.cost.toFixed(2)}</td>
+              <td>{product.name}</td>
+              <td>{product.inStock}</td>
+              <td>${product.salePrice.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
       </table>
       {isModalOpen && (
-        <SupplyModal
+        <Modal
           onClose={handleModalClose}
-          supply={selectedSupply}
-          onUpdate={handleSupplyUpdate}
+          product={selectedProduct}
+          onUpdate={handleProductUpdate}
         />
       )}
     </div>
   );
 }
 
-export default SuppliesTable;
+export default ProductsTable;
