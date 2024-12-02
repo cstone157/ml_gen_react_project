@@ -18,6 +18,7 @@ exports.getUsers = async (req, res) => {
         const users = await User.find();
         res.status(200).json(users);
     } catch (err) {
+        console.log(err);
         res.status(400).json({ message: 'Error getting users' });
     }
 };
