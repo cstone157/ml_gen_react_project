@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductsModal from './ProductsModal';
+import CreateProductModal from './CreateProductModal';
 
 function ProductsTable() {
   const [products, setProducts] = useState([]);
@@ -28,6 +29,27 @@ function ProductsTable() {
   const handleRowClick = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
+  };
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const handleCreateModalClose = () => {
+    setIsCreateModalOpen(false);
+  };
+
+  const handleCreateProduct = async (newProduct) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct),
+      });
+      const data = await response.json();
+      setProducts([...products, data]);
+    } catch (error) {
+      console.error(error);
+    }
+    handleCreateModalClose();
   };
 
   const handleModalClose = () => {
@@ -85,6 +107,12 @@ function ProductsTable() {
           overflow: 'hidden',
         }}
       >
+        <div style={{
+                alignItems: 'right',
+                textAlign: 'right'
+            }}>
+            <button onClick={() => setIsCreateModalOpen(true)}>New</button>
+        </div>
         <table>
           <thead>
             <tr>
@@ -145,6 +173,12 @@ function ProductsTable() {
           onClose={handleModalClose}
           product={selectedProduct}
           onUpdate={handleProductUpdate}
+        />
+      )}
+      {isCreateModalOpen && (
+        <CreateProductModal
+          onClose={handleCreateModalClose}
+          onCreate={handleCreateProduct}
         />
       )}
     </div>

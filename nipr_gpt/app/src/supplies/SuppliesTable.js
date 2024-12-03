@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SupplyModal from './SupplyModal';
+import CreateSupplyModal from './CreateSupplyModal';
 
 function SuppliesTable() {
   const [supplies, setSupplies] = useState([]);
@@ -30,8 +31,28 @@ function SuppliesTable() {
     setIsModalOpen(true);
   };
 
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const handleCreateModalClose = () => {
+    setIsCreateModalOpen(false);
+  };
   const handleModalClose = () => {
     setIsModalOpen(false);
+  };
+
+  const handleCreateSupply = async (newSupply) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/supplies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSupply),
+      });
+      const data = await response.json();
+      setSupplies([...supplies, data]);
+    } catch (error) {
+      console.error(error);
+    }
+    handleCreateModalClose();
   };
 
   const handleSupplyUpdate = async (updatedSupply) => {
@@ -77,6 +98,7 @@ function SuppliesTable() {
         padding: '20px',
       }}
     >
+      
       <div
         style={{
           width: '90%',
@@ -85,6 +107,12 @@ function SuppliesTable() {
           overflow: 'hidden',
         }}
       >
+        <div style={{
+            alignItems: 'right',
+            textAlign: 'right'
+        }}>
+          <button onClick={() => setIsCreateModalOpen(true)}>New</button>
+        </div>
         <table>
           <thead>
             <tr>
@@ -145,6 +173,12 @@ function SuppliesTable() {
           onClose={handleModalClose}
           supply={selectedSupply}
           onUpdate={handleSupplyUpdate}
+        />
+      )}
+      {isCreateModalOpen && (
+        <CreateSupplyModal
+          onClose={handleCreateModalClose}
+          onCreate={handleCreateSupply}
         />
       )}
     </div>
