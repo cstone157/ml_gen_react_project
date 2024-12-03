@@ -24,28 +24,8 @@ function CreateProductModal({ onClose, onCreate }) {
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: '#fff',
-          padding: '20px',
-          borderRadius: '10px',
-          boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-          maxWidth: '800px',
-        }}
-      >
+    <div className='modal'>
+      <div className='content'>
         <h2>Create New Product</h2>
         <form>
           <label>
