@@ -1,10 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import SupplySelector from '../supplies/SupplySelector';
 
 function CreateProductModal({ onClose, onCreate }) {
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [inStock, setInStock] = useState(0);
   const [salePrice, setSalePrice] = useState(0);
   const [supplies, setSupplies] = useState([]);
+  const [allSupplies, setAllSupplies] = useState([]);
+
+  useEffect(() => {
+    const fetchSupplies = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/supplies');
+        const data = await response.json();
+        setAllSupplies(data);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+    fetchSupplies();
+  }, []);
 
   const handleCreate = () => {
     const newProduct = { name, inStock, salePrice, supplies };
@@ -12,7 +31,7 @@ function CreateProductModal({ onClose, onCreate }) {
   };
 
   const handleAddSupply = () => {
-    setSupplies([...supplies, { supply: { name: '' }, quantityRequired: 0 }]);
+    setSupplies([...supplies, { supply: { id: '', name: '' }, quantityRequired: 0 }]);
   };
 
   const handleRemoveSupply = (index) => {
@@ -47,12 +66,12 @@ function CreateProductModal({ onClose, onCreate }) {
           {supplies.map((supply, index) => (
             <div key={index}>
               <label>
-                Supply:
-                <input
-                  type="text"
-                  value={supply.supply.name}
-                  onChange={(e) => handleSupplyChange(index, { ...supply, supply: { name: e.target.value } })}
-                />
+              <SupplySelector
+                supplies={allSupplies}
+                //value={supply.supply.id}
+                value={supply.id}
+                onChange={(value) => handleSupplyChange(index, value)}
+              />
               </label>
               <br />
               <label>
@@ -67,9 +86,9 @@ function CreateProductModal({ onClose, onCreate }) {
               <button onClick={() => handleRemoveSupply(index)}>Remove</button>
             </div>
           ))}
-          <button onClick={handleAddSupply}>Add Supply</button>
-          <button onClick={handleCreate}>Create</button>
-          <button onClick={onClose}>Cancel</button>
+          <button type="button" onClick={handleAddSupply}>Add Supply</button>
+          <button type="button" onClick={handleCreate}>Create</button>
+          <button type="button" onClick={onClose}>Cancel</button>
         </form>
       </div>
     </div>

@@ -43,7 +43,7 @@ function ProductsModal({ onClose, product, onUpdate }) {
           {supplies.map((supply, index) => (
             <div key={index}>
               <label>
-                {supply.supply.name}:
+                {supply.name}:
                 <input
                   type="number"
                   value={supply.quantityRequired}
